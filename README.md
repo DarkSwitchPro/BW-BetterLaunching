@@ -1,2 +1,2 @@
 # BW-BetterLaunching
- Makes launching stuff with multiple rigidbodies easier!
+ Mod that makes launching stuff with multiple rigid bodies easier!
