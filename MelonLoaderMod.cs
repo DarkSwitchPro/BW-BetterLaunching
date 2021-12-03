@@ -2,7 +2,7 @@
 using UnityEngine;
 using HarmonyLib;
 using StressLevelZero.Interaction;
-using ModThatIsNotMod;
+using StressLevelZero.Props.Weapons;
 
 namespace BetterLaunching
 {
@@ -29,19 +29,17 @@ namespace BetterLaunching
 
             public static void Postfix(StressLevelZero.Props.Weapons.GravityGun __instance)
             {
-                Vector3 postVelocity = __instance.m_GrabbedRigidbody.gameObject.GetComponent<Rigidbody>().velocity;
-
+                Vector3 postVelocity = __instance.m_GrabbedRigidbody.velocity;
                 Rigidbody grabbedRigidbody = __instance.m_GrabbedRigidbody;
+                if (grabbedRigidbody == null)
+                    return;
                 Transform root = grabbedRigidbody.GetComponentInParent<InteractableHostManager>()?.transform ?? grabbedRigidbody.GetComponentInParent<InteractableHost>()?.transform ?? grabbedRigidbody.transform;
                 Rigidbody[] rigidbodies = root.GetComponentsInChildren<Rigidbody>();
                 float velocityImpulseFactor = 2f;
 
                 foreach (Rigidbody rb in rigidbodies)
                 {
-                    if (rb != null)
-                    {
-                        rb.AddForce(postVelocity * velocityImpulseFactor, ForceMode.Impulse);
-                    }
+                    rb.AddForce(postVelocity * velocityImpulseFactor, ForceMode.Impulse);
                 }
             }
         }
