@@ -1,7 +1,8 @@
 ﻿using MelonLoader;
 using UnityEngine;
-using StressLevelZero.Props.Weapons;
 using HarmonyLib;
+using StressLevelZero.Interaction;
+using ModThatIsNotMod;
 
 namespace BetterLaunching
 {
@@ -16,22 +17,22 @@ namespace BetterLaunching
 
     public class BetterLaunching : MelonMod
     {
-        [HarmonyPatch(typeof(GravityGun), "Blast")]
+        [HarmonyPatch(typeof(StressLevelZero.Props.Weapons.GravityGun), "Blast")]
         public static class GravityGunBlastPatch
         {
             public static Vector3 preVelocity;
 
-            public static void Prefix(GravityGun __instance)
+            public static void Prefix(StressLevelZero.Props.Weapons.GravityGun __instance)
             {
-                preVelocity = __instance.m_GrabbedRigidbody.gameObject.GetComponent<Rigidbody>().velocity;
+                preVelocity = __instance.m_GrabbedRigidbody.velocity;
             }
 
-            public static void Postfix(GravityGun __instance)
+            public static void Postfix(StressLevelZero.Props.Weapons.GravityGun __instance)
             {
                 Vector3 postVelocity = __instance.m_GrabbedRigidbody.gameObject.GetComponent<Rigidbody>().velocity;
 
                 Rigidbody grabbedRigidbody = __instance.m_GrabbedRigidbody;
-                Transform root = grabbedRigidbody.transform.root;
+                Transform root = grabbedRigidbody.GetComponentInParent<InteractableHostManager>()?.transform ?? grabbedRigidbody.GetComponentInParent<InteractableHost>()?.transform ?? grabbedRigidbody.transform;
                 Rigidbody[] rigidbodies = root.GetComponentsInChildren<Rigidbody>();
                 float velocityImpulseFactor = 2f;
 
@@ -50,5 +51,6 @@ namespace BetterLaunching
             HarmonyLib.Harmony harmonyInstance = new HarmonyLib.Harmony("DSP.BetterLaunching.Harmony");
             harmonyInstance.PatchAll();
         }
+
     }
 }
