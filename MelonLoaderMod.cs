@@ -3,6 +3,8 @@ using UnityEngine;
 using HarmonyLib;
 using StressLevelZero.Interaction;
 using StressLevelZero.Props.Weapons;
+using ModThatIsNotMod;
+using ModThatIsNotMod.BoneMenu;
 
 namespace BetterLaunching
 {
@@ -17,6 +19,9 @@ namespace BetterLaunching
 
     public class BetterLaunching : MelonMod
     {
+
+        private static float velocityImpulseFactor = 1f;
+
         [HarmonyPatch(typeof(StressLevelZero.Props.Weapons.GravityGun), "Blast")]
         public static class GravityGunBlastPatch
         {
@@ -35,7 +40,6 @@ namespace BetterLaunching
                     return;
                 Transform root = grabbedRigidbody.GetComponentInParent<InteractableHostManager>()?.transform ?? grabbedRigidbody.GetComponentInParent<InteractableHost>()?.transform ?? grabbedRigidbody.transform;
                 Rigidbody[] rigidbodies = root.GetComponentsInChildren<Rigidbody>();
-                float velocityImpulseFactor = 2f;
 
                 foreach (Rigidbody rb in rigidbodies)
                 {
@@ -48,7 +52,9 @@ namespace BetterLaunching
         {
             HarmonyLib.Harmony harmonyInstance = new HarmonyLib.Harmony("DSP.BetterLaunching.Harmony");
             harmonyInstance.PatchAll();
-        }
 
+            MenuCategory Betterlaunching = MenuManager.CreateCategory("Better Launching", Color.blue);
+            Betterlaunching.CreateFloatElement("Launch Multiplier", Color.white, velocityImpulseFactor, (value) => velocityImpulseFactor = value, 0.5f, 1f, 2f, true);
+        }
     }
 }
